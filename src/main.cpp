@@ -48,77 +48,39 @@ void ChangeScene(Aspen::Graphics::UI::Button *button, std::string scene, GameSta
   gsm->SetCurrentState(scene);
 }
 
-class Player : public Aspen::Object::Object
-{ 
- Aspen::Graphics::Animation *anim1;
- Aspen::Graphics::Animation *anim2;
- Aspen::Graphics::UI::Text  *youWin;
 
+  class Player : public Aspen::Graphics::Animation
+{
 public:
-   Player(Object *parent = nullptr, std::string name = "Player") :
-     Object(parent, name)
+  Player(Object *parent = nullptr, std::string name = "Player") : Aspen::Graphics::Animation(
+                                                                        new Aspen::Graphics::UniformSpritesheet("./resources/lundmarkyeezy.png", 300, 300, 1, nullptr, "Loadng"),
+                                                                        1.0f / 12.0f, parent, name)
+
   {
-    youWin = new Aspen::Graphics::UI::Text("YOU WIN!!!" , "default", 64, this, "Title");
-    AddChild(youWin);
-    youWin->GetTransform()->SetPosition( 320, 240);
-    youWin->GetTransform()->SetRotation( 3.128f );
-    youWin->GetTransform()->SetScale( 1, 1);
-    youWin->Deactivate();
-
-
-
-
-    anim1 = new Aspen::Graphics::Animation(new Aspen::Graphics::UniformSpritesheet("./resources/New Piskel.png",32, 32, 94, nullptr, "CubeSpritesheet"), 1.0f/12.0f, parent, "Cube animation");
-    AddChild(anim1);
-    anim2 = new Aspen::Graphics::Animation(new Aspen::Graphics::UniformSpritesheet("./resources/Flight.png",32, 32, 9, nullptr, "FlightSpritesheet"), 1.0f/12.0f, parent, "Flight animation");
-    anim2->Deactivate();
-    AddChild(anim2);
-    CreateChild<Aspen::Physics::AABBCollider>()->SetSize(32,32);
+    GetTransform()->SetPosition(200, 200);
+    //GetTransform()->SetScale(0.3, 0.3);
+    //CreateChild<Aspen::Physics::AABBCollider>()->SetSize(644 * 0.3, 644 * 0.3);
     CreateChild<Aspen::Physics::Rigidbody>();
-    CreateChild<Aspen::Transform::Transform>();
-    GetTransform()->SetPosition(100, 100);
   }
+};
+  class Player2 : public Aspen::Graphics::Animation
+{
+public:
+  Player2(Object *parent = nullptr, std::string name = "Player2") : Aspen::Graphics::Animation(
+                                                                        new Aspen::Graphics::UniformSpritesheet("./resources/lundmarkyeezy.png", 300, 300, 1, nullptr, "Loadng"),
+                                                                        1.0f / 12.0f, parent, name)
+
+  {
+    GetTransform()->SetPosition(200, 200);
+    //GetTransform()->SetScale(0.3, 0.3);
+    //CreateChild<Aspen::Physics::AABBCollider>()->SetSize(644 * 0.3, 644 * 0.3);
+    CreateChild<Aspen::Physics::Rigidbody>();
+  }
+};
 
   void OnUpdate()
   {
-    if (Aspen::Input::KeyHeld(SDLK_w))
-    {
-      GetRigidbody()->SetCartesianVelocity(0, -5);
-      anim1->Deactivate();
-      anim2->Activate();
-    }
     
-    if (Aspen::Input::KeyHeld(SDLK_s))
-    {
-      GetRigidbody()->SetCartesianVelocity(0, 5);
-      anim1->Deactivate();
-      anim2->Activate();
-      
-      
-      
-    }
-      
-    if (Aspen::Input::KeyHeld(SDLK_a))
-    {
-      GetRigidbody()->SetCartesianVelocity(-5, 0);
-      anim1->Deactivate();
-      anim2->Activate();
-    }
-     
-      if (Aspen::Input::KeyHeld(SDLK_d))
-    {
-      GetRigidbody()->SetCartesianVelocity(5, 0);
-      anim1->Deactivate();
-      anim2->Activate();
-    }
-           
-      if (!Aspen::Input::KeyHeld(SDLK_d) && !Aspen::Input::KeyHeld(SDLK_s) && !Aspen::Input::KeyHeld(SDLK_a) && !Aspen::Input::KeyHeld(SDLK_w))
-    {
-      anim2->Deactivate();
-      anim1->Activate();
-    }
-    
-  }
   void OnCollision (Aspen::Physics::Collision c)
     {
 
@@ -131,6 +93,36 @@ public:
     
 
     }
+};
+
+class Enemy : public Aspen::Object::Object
+{
+Aspen::Graphics::Animation anim1;
+bool GoingRight = true;
+
+public:
+Enemy(Object* parent = nullptr, std::string name = "Enemy") : Aspen::Object::Object (parent, name)
+{
+CreateChild<Aspen::Transform::Transform>();
+CreateChild<Aspen::Physics::Rigidbody>();
+CreateChild<Aspen::Physics::AABBCollider>()->SetSize(100,100);
+}
+
+void OnUpdate()
+{
+if (GoingRight)
+{
+  GetRigidbody()->SetCartesianVelocity(3,0);
+}
+if (!GoingRight)
+{
+  GetRigidbody()->SetCartesianVelocity(-3,0);
+}
+}
+void OnCollision(Aspen::Physics::Collision c)
+{
+GoingRight = !GoingRight;
+}
 };
 
 class Platform : public Aspen::Graphics::Rectangle
@@ -202,7 +194,8 @@ class MainMenu : public GameState
   
   Player *player;
   Platform *platform;
-
+  Enemy *enemy1;
+  Player2 *Player2;
   
 public:
   MainMenu(Object *parent=nullptr, std::string name="MainMenu") : GameState(parent, name)
@@ -222,8 +215,8 @@ public:
 
  
 
-  
-
+  enemy1 = new Enemy();
+  AddChild(enemy1);
 
 
 
@@ -232,91 +225,45 @@ public:
   AddChild(player);
   platform = new Platform(); 
   AddChild(platform); 
+  player2 = new Player2();
+  AddChild(player2);
   }
   
  
 
   void OnUpdate()
   {
-    if (Aspen::Input::KeyHeld(SDLK_SPACE))
-      {
-
-  
-       Aspen::Log::Info("Space held");
-       
-      }
-      else
-      {
+   
+ if (Aspen::Input::KeyHeld(SDLK_UP))
+    {
+      Player2->GetRigidbody()->SetCartesianVelocity(0, 5);
+    }
+    
+    if (Aspen::Input::KeyHeld(SDLK_Right))
+    {
+      Player2->GetRigidbody()->SetCartesianVelocity(5, 0 );
+    }
+    if (Aspen::Input::KeyHeld(SDLK_LEFT))
+    {
+      Player2->GetRigidbody()->SetCartesianVelocity(-5, 0);
+    }
       
-       //title->GetTransform()-> SetPosition(271, 117);
-
-      }
-
-
-
-       if (Aspen::Input::KeyHeld(SDLK_s))
+    
+       if (Aspen::Input::KeyHeld(SDLK_w))
       {
-
-  
-       Aspen::Log::Info("s held");
-       //title->GetTransform()-> SetScale(2, 2);
-       
-      }
-      else
-      {
-      
-     
-
+         Player->GetRigidbody()->SetCartesianVelocity(0, 5);
       }
        
-      if (Aspen::Input::KeyHeld(SDLK_UP))
+      if (Aspen::Input::KeyHeld(SDLK_a))
       {
-        Aspen::Log::Info("Up held");
-        ///title->GetTransform()->SetRotation( 40.138f );//
-
-        
-       // title->GetRigidbody()-> SetCartesianVelocity(0, 5);
-         
-      }
-      if (Aspen::Input::KeyHeld(SDLK_DOWN))
-      {
-        Aspen::Log::Info("Down held");
-        
-
-
-        
+         Player->GetRigidbody()->SetCartesianVelocity(-5, 0);
         
       }
-
-
-
-
-
-
-
-
-
-
-
-      if (Aspen::Input::KeyHeld(SDLK_LEFT))
+      if (Aspen::Input::KeyHeld(SDLK_d))
       {
-        Aspen::Log::Info("Left held");
-        ///title->GetTransform()->SetRotation( 40.138f );//
-
-
-        
+        Player->GetRigidbody()->SetCartesianVelocity( 5, 0);
       }
-        
-        else if (Aspen::Input::KeyHeld(SDLK_RIGHT))
-        {
-          Aspen::Log::Info("Right held");
-         
 
-        }
-          else
-          {
-            
-          }  
       
 
    
@@ -350,7 +297,10 @@ int main(int argc, char **argv)
     //gfx->CreateChild<Aspen::Debug::Debug>();
     //gfx->CreateChild<Aspen::Graphics::FontCache>();
     //engine.AddChild(gfx);
-
+Aspen::Graphics::Graphics *gfx = new Aspen::Graphics::Graphics(1280, 720, &engine, "Graphics 720p");
+  engine.AddChild(gfx);
+  gfx->CreateChild<Aspen::Debug::Debug>();
+  gfx->CreateChild<Aspen::Graphics::FontCache>(); 
   Engine engine(Aspen::Engine::START_FLAGS::ALL);
   engine.FindChildOfType<Aspen::Physics::Physics>()->SetGravityStrength(0);
   engine.FindChildOfType<Aspen::Physics::Physics>()->SetDrag(0.1);
