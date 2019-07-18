@@ -13,6 +13,13 @@
 
 
 
+///Goals for Elle://///
+//-Make background sprite the background of the game
+//
+
+
+
+
 
 
 
@@ -165,9 +172,49 @@ public:
     }
 
 };
-    
+
+
+
+class Background : public Aspen::Object::Object
+
+{
+Aspen::Graphics::Sprite *BG;  
+public:
+
+Background(Object *parent = nullptr, std::string name = "Background") :
+
+  Object(parent, name)
+  {
+    CreateChild<Aspen::Transform::Transform>();
+    BG = new Aspen::Graphics::Sprite("./resources/Background_Final.png", parent, "background");
+    AddChild(BG); 
+  }
+
+
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class MainMenu : public GameState
 {
+  
   Aspen::Graphics::UI::Text  *title;
   
   Player *player;
@@ -177,12 +224,20 @@ class MainMenu : public GameState
   
 public:
   MainMenu(Object *parent=nullptr, std::string name="MainMenu") : GameState(parent, name)
+  
+  
   {
+  
+  Background *BG = new Background(nullptr, "Background");
+  //Aspen::Log::Debug("Background is in the program!")
+  BG->GetTransform()->SetPosition(200, 200);
+  AddChild(BG);
   title = new Aspen::Graphics::UI::Text("My Cool Game" , "default", 64, this, "Title");
   AddChild(title);
   title->GetTransform()->SetPosition( 271, 117);
   title->GetTransform()->SetRotation( 3.128f );
   title->GetTransform()->SetScale( 1, 1);
+
  
 
   enemy1 = new Enemy();
