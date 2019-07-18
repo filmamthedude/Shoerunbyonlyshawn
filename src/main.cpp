@@ -88,6 +88,29 @@ public:
     }
 };
 
+class FO : public Aspen::Object::Object
+{
+bool GoingRight = true;
+public:
+  FO(Object* parent = nullptr, std::string name = "Enemy") : Aspen::Object::Object (parent, name)
+  {
+    CreateChild<Aspen::Transform::Transform>();
+    CreateChild<Aspen::Physics::Rigidbody>();
+    CreateChild<Aspen::Physics::AABBCollider>()->SetSize(300,100);  
+  }
+  void OnUpdate()
+  {
+      if (GoingRight)
+      {
+        GetRigidbody()->SetCartesianVelocity(3,0);
+      }
+      if (!GoingRight)
+      {
+        GetRigidbody()->SetCartesianVelocity(-3,0);
+      }
+  }
+};
+
 class Enemy : public Aspen::Object::Object
 {
 Aspen::Graphics::Animation anim1;
@@ -117,6 +140,8 @@ void OnCollision(Aspen::Physics::Collision c)
 GoingRight = !GoingRight;
 }
 };
+
+
 
 class Platform : public Aspen::Graphics::Rectangle
 { 
