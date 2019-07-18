@@ -242,7 +242,10 @@ int main(int argc, char **argv)
     //gfx->CreateChild<Aspen::Debug::Debug>();
     //gfx->CreateChild<Aspen::Graphics::FontCache>();
     //engine.AddChild(gfx);
-
+Aspen::Graphics::Graphics *gfx = new Aspen::Graphics::Graphics(1280, 720, &engine, "Graphics 720p");
+  engine.AddChild(gfx);
+  gfx->CreateChild<Aspen::Debug::Debug>();
+  gfx->CreateChild<Aspen::Graphics::FontCache>(); 
   Engine engine(Aspen::Engine::START_FLAGS::ALL);
   engine.FindChildOfType<Aspen::Physics::Physics>()->SetGravityStrength(0);
   engine.FindChildOfType<Aspen::Physics::Physics>()->SetDrag(0.1);
