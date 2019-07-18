@@ -9,6 +9,7 @@
 #include "Audio.hpp"
 #include "Input.hpp"
 #include "GameState.hpp"
+#include "Debug.hpp"
 #include <iostream>
 
 
@@ -76,23 +77,6 @@ public:
     //CreateChild<Aspen::Physics::AABBCollider>()->SetSize(644 * 0.3, 644 * 0.3);
     CreateChild<Aspen::Physics::Rigidbody>();
   }
-};
-
-  void OnUpdate()
-  {
-    
-  void OnCollision (Aspen::Physics::Collision c)
-    {
-
-    Aspen::Log::Debug("COLLISIONnnnn");
-    GetRigidbody()->SetCartesianVelocity(0, -3);
-    anim1->Deactivate();
-    youWin->Activate();
-    anim2->Deactivate();
-    GetRigidbody()->SetCartesianVelocity(0, 0);
-    
-
-    }
 };
 
 class FO : public Aspen::Object::Object
@@ -220,7 +204,7 @@ class MainMenu : public GameState
   Player *player;
   Platform *platform;
   Enemy *enemy1;
-  Player2 *Player2;
+  Player2 *player2;
   
 public:
   MainMenu(Object *parent=nullptr, std::string name="MainMenu") : GameState(parent, name)
@@ -261,32 +245,32 @@ public:
    
  if (Aspen::Input::KeyHeld(SDLK_UP))
     {
-      Player2->GetRigidbody()->SetCartesianVelocity(0, 5);
+      player2->GetRigidbody()->SetCartesianVelocity(0, 5);
     }
     
-    if (Aspen::Input::KeyHeld(SDLK_Right))
+    if (Aspen::Input::KeyHeld(SDLK_RIGHT))
     {
-      Player2->GetRigidbody()->SetCartesianVelocity(5, 0 );
+      player2->GetRigidbody()->SetCartesianVelocity(5, 0 );
     }
     if (Aspen::Input::KeyHeld(SDLK_LEFT))
     {
-      Player2->GetRigidbody()->SetCartesianVelocity(-5, 0);
+      player2->GetRigidbody()->SetCartesianVelocity(-5, 0);
     }
       
     
        if (Aspen::Input::KeyHeld(SDLK_w))
       {
-         Player->GetRigidbody()->SetCartesianVelocity(0, 5);
+         player->GetRigidbody()->SetCartesianVelocity(0, 5);
       }
        
       if (Aspen::Input::KeyHeld(SDLK_a))
       {
-         Player->GetRigidbody()->SetCartesianVelocity(-5, 0);
+         player->GetRigidbody()->SetCartesianVelocity(-5, 0);
         
       }
       if (Aspen::Input::KeyHeld(SDLK_d))
       {
-        Player->GetRigidbody()->SetCartesianVelocity( 5, 0);
+        player->GetRigidbody()->SetCartesianVelocity( 5, 0);
       }
 
       
@@ -313,20 +297,16 @@ int main(int argc, char **argv)
   Aspen::Log::Log::SetFile("./Aspen.log");
 
 
-  //Engine engine(Aspen::Engine::START_FLAGS::ALL ^ (
-    //Aspen::Engine::START_FLAGS::CREATE_GRAPHICS |
-    //Aspen::Engine::START_FLAGS::CREATE_GRAPHICS_DEBUGGER |
-    //Aspen::Engine::START_FLAGS::CREATE_GRAPHICS_FONTCACHE
-    //));
-    //Aspen::Graphics::Graphics *gfx = new Aspen::Graphics::Graphics(640, 480);
-    //gfx->CreateChild<Aspen::Debug::Debug>();
-    //gfx->CreateChild<Aspen::Graphics::FontCache>();
-    //engine.AddChild(gfx);
-Aspen::Graphics::Graphics *gfx = new Aspen::Graphics::Graphics(1280, 720, &engine, "Graphics 720p");
+  Engine engine(Aspen::Engine::START_FLAGS::ALL ^ (
+    Aspen::Engine::START_FLAGS::CREATE_GRAPHICS |
+    Aspen::Engine::START_FLAGS::CREATE_GRAPHICS_DEBUGGER |
+    Aspen::Engine::START_FLAGS::CREATE_GRAPHICS_FONTCACHE
+    ));
+  Aspen::Graphics::Graphics *gfx = new Aspen::Graphics::Graphics(1280, 720, &engine, "Graphics 720p");
   engine.AddChild(gfx);
   gfx->CreateChild<Aspen::Debug::Debug>();
   gfx->CreateChild<Aspen::Graphics::FontCache>(); 
-  Engine engine(Aspen::Engine::START_FLAGS::ALL);
+  
   engine.FindChildOfType<Aspen::Physics::Physics>()->SetGravityStrength(0);
   engine.FindChildOfType<Aspen::Physics::Physics>()->SetDrag(0.1);
   engine.FindChildOfType<Aspen::Time::Time>()->TargetFramerate(60);
