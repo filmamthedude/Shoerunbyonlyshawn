@@ -45,6 +45,7 @@ class Player : public Aspen::Object::Object
 { 
  Aspen::Graphics::Animation *anim1;
  Aspen::Graphics::Animation *anim2;
+ Aspen::Graphics::Animation *sprite;
  Aspen::Graphics::UI::Text  *youWin;
 
 public:
@@ -126,6 +127,36 @@ public:
     }
 };
 
+class Enemy : public Aspen::Object::Object
+{
+Aspen::Graphics::Animation anim1;
+bool GoingRight = true;
+
+public:
+Enemy(Object* parent = nullptr, std::string name = "Enemy") : Aspen::Object::Object (parent, name)
+{
+CreateChild<Aspen::Transform::Transform>();
+CreateChild<Aspen::Physics::Rigidbody>();
+CreateChild<Aspen::Physics::AABBCollider>()->SetSize(100,100);
+}
+
+void OnUpdate()
+{
+if (GoingRight)
+{
+  GetRigidbody()->SetCartesianVelocity(3,0);
+}
+if (!GoingRight)
+{
+  GetRigidbody()->SetCartesianVelocity(-3,0);
+}
+}
+void OnCollision(Aspen::Physics::Collision c)
+{
+GoingRight = !GoingRight;
+}
+};
+
 class Platform : public Aspen::Graphics::Rectangle
 { 
 public:
@@ -155,6 +186,7 @@ class MainMenu : public GameState
   
   Player *player;
   Platform *platform;
+  Enemy *enemy1;
   
 public:
   MainMenu(Object *parent=nullptr, std::string name="MainMenu") : GameState(parent, name)
@@ -166,8 +198,8 @@ public:
   title->GetTransform()->SetScale( 1, 1);
  
 
-  
-
+  enemy1 = new Enemy();
+  AddChild(enemy1);
 
 
 
