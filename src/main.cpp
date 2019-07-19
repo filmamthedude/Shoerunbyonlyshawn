@@ -9,7 +9,6 @@
 #include "Audio.hpp"
 #include "Input.hpp"
 #include "GameState.hpp"
-#include "Debug.hpp"
 #include <iostream>
 
 // This is my special comment
@@ -58,6 +57,21 @@ public:
     CreateChild<Aspen::Physics::AABBCollider>()->SetSize(100, 100);
     CreateChild<Aspen::Physics::Rigidbody>();
   }
+};
+
+
+  void OnCollision (Aspen::Physics::Collision c)
+    {
+
+    Aspen::Log::Debug("COLLISIONnnnn");
+    GetRigidbody()->SetCartesianVelocity(0, -3);
+    anim1->Deactivate();
+    youWin->Activate();
+    anim2->Deactivate();
+    GetRigidbody()->SetCartesianVelocity(0, 0);
+    
+
+    }
 };
 
 class FO : public Aspen::Object::Object
@@ -204,7 +218,7 @@ public:
     }
     if (Aspen::Input::KeyHeld(SDLK_LEFT))
     {
-      player2->GetRigidbody()->SetCartesianVelocity(-5, 0);
+      Player2->GetRigidbody()->SetCartesianVelocity(-5, 0);
     }
 
     if (Aspen::Input::KeyHeld(SDLK_w))
