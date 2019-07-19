@@ -35,13 +35,13 @@ class Player : public Aspen::Graphics::Animation
 {
 public:
   Player(Object *parent = nullptr, std::string name = "Player") : Aspen::Graphics::Animation(
-                                                                      new Aspen::Graphics::UniformSpritesheet("./resources/lundmarkyeezy.png", 300, 300, 1, nullptr, "Loadng"),
+                                                                      new Aspen::Graphics::UniformSpritesheet("./resources/blackaj1.png", 200, 133, 1, nullptr, "Loadng"),
                                                                       1.0f / 12.0f, parent, name)
 
   {
-    GetTransform()->SetPosition(200, 200);
+    GetTransform()->SetPosition(100, 100);
     //GetTransform()->SetScale(0.3, 0.3);
-    //CreateChild<Aspen::Physics::AABBCollider>()->SetSize(644 * 0.3, 644 * 0.3);
+    CreateChild<Aspen::Physics::AABBCollider>()->SetSize(100, 100);
     CreateChild<Aspen::Physics::Rigidbody>();
   }
 };
@@ -53,9 +53,9 @@ public:
                                                                         1.0f / 12.0f, parent, name)
 
   {
-    GetTransform()->SetPosition(200, 200);
+    GetTransform()->SetPosition(650, 100);
     //GetTransform()->SetScale(0.3, 0.3);
-    //CreateChild<Aspen::Physics::AABBCollider>()->SetSize(644 * 0.3, 644 * 0.3);
+    CreateChild<Aspen::Physics::AABBCollider>()->SetSize(100, 100);
     CreateChild<Aspen::Physics::Rigidbody>();
   }
 };
@@ -154,6 +154,7 @@ class MainMenu : public GameState
   Platform *platform;
   Platform *platform2;
   Platform *platform3;
+  Enemy *enemy;
 
 public:
   MainMenu(Object *parent = nullptr, std::string name = "MainMenu") : GameState(parent, name)
@@ -177,15 +178,16 @@ public:
     AddChild(player);
     player2 = new Player2();
     AddChild(player2);
+    player2->GetTransform()->SetPosition(680, 0);
     platform = new Platform();
     AddChild(platform);
     platform->GetTransform()->SetPosition(640, 670);
     platform2 = new Platform();
     AddChild(platform2);
-    platform2->GetTransform()->SetPosition(640, 400);
-    platform3 = new Platform();
-    AddChild(platform3);
-    platform3->GetTransform()->SetPosition(640, 400);
+    platform2->GetTransform()->SetPosition(640, 350);
+    enemy = new Enemy();
+    AddChild(enemy);
+    platform2->GetTransform()->SetPosition(200, 200);
   }
 
   void OnUpdate()
@@ -193,7 +195,7 @@ public:
 
     if (Aspen::Input::KeyHeld(SDLK_UP))
     {
-      player2->GetRigidbody()->SetCartesianVelocity(0, 5);
+      player2->GetRigidbody()->SetCartesianVelocity(0, -5);
     }
 
     if (Aspen::Input::KeyHeld(SDLK_RIGHT))
@@ -207,21 +209,7 @@ public:
 
     if (Aspen::Input::KeyHeld(SDLK_w))
     {
-      player->GetRigidbody()->SetCartesianVelocity(0, 5);
-    }
-
-    if (Aspen::Input::KeyHeld(SDLK_a))
-    {
-      player->GetRigidbody()->SetCartesianVelocity(-5, 0);
-    }
-    if (Aspen::Input::KeyHeld(SDLK_d))
-    {
-      player->GetRigidbody()->SetCartesianVelocity(5, 0);
-    }
-
-    if (Aspen::Input::KeyHeld(SDLK_w))
-    {
-      player->GetRigidbody()->SetCartesianVelocity(0, 5);
+      player->GetRigidbody()->SetCartesianVelocity(0, -5);
     }
 
     if (Aspen::Input::KeyHeld(SDLK_a))
@@ -255,7 +243,7 @@ int main(int argc, char **argv)
   gfx->CreateChild<Aspen::Debug::Debug>();
   gfx->CreateChild<Aspen::Graphics::FontCache>();
 
-  engine.FindChildOfType<Aspen::Physics::Physics>()->SetGravityStrength(0);
+  engine.FindChildOfType<Aspen::Physics::Physics>()->SetGravityStrength(0.3);
   engine.FindChildOfType<Aspen::Physics::Physics>()->SetDrag(0.1);
   engine.FindChildOfType<Aspen::Time::Time>()->TargetFramerate(60);
   engine.FindChildOfType<Aspen::Graphics::Graphics>()->FindChildOfType<Aspen::Graphics::FontCache>()->LoadFont("resources/ABeeZee-Regular.ttf", "default");
